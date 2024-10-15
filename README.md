@@ -38,7 +38,7 @@
 | username       | VARCHAR       | 회원 이름                   |
 | password       | VARCHAR       | 비밀번호                    |
 | email          | VARCHAR       | 이메일                      |
-| role           | VARCHAR       | 사용자 권한 (USER, ADMIN 등) |
+| role           | VARCHAR       | 사용자 권한 (USER, ADMIN) |
 
 ### 가상화폐 정보 테이블
 | 컬럼명          | 타입          | 설명                        |
