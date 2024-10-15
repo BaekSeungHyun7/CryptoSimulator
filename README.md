@@ -69,6 +69,7 @@
 | post_id        | BIGINT (PK)   | 게시물 고유 ID              |
 | member_id      | BIGINT (FK)   | 작성자 ID                   |
 | content        | TEXT          | 게시물 내용                 |
+| investment_id  | BIGINT (FK)   | 공유된 투자 기록 ID (선택적) |
 | created_at     | DATETIME      | 작성일                      |
 
 ### 댓글 테이블
