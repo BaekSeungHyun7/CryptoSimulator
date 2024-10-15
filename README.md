@@ -28,6 +28,7 @@
 - **Back-end**: Java, Spring Boot, REST API
 - **Database**: MySQL
 - **IDE**: Eclipse
+- API : https://api.coinpaprika.com/#operation/getTickers
 
 ## 데이터베이스 설계
 
