@@ -95,5 +95,9 @@
 
 ### 커뮤니티
 - `POST /posts`: 게시물 작성
--
-
+- `GET /posts`: 게시물 목록 조회
+- `GET /posts/{id}`: 특정 게시물 조회
+- `PUT /posts/{id}`: 게시물 수정
+- `DELETE /posts/{id}`: 게시물 삭제
+- `POST /posts/{id}/comments`: 댓글 작성
+- `GET /posts/{id}/comments`: 댓글 목록 조회
