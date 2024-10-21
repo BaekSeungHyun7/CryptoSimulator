@@ -114,7 +114,34 @@
 
 ---
 
-### 4. 커뮤니티 게시물 테이블 (Community Post Table)
+### 4.포트폴리오 테이블 (Portfolio Table)
+
+| 컬럼명           | 설명           | 자료형         | 제약조건        |
+|------------------|----------------|---------------|----------------|
+| portfolio_id     | 포트폴리오 ID  | BIGINT        | PK             |
+| user_id          | 회원 ID        | BIGINT        | FK (User)      |
+| total_investment | 총 투자 금액    | DECIMAL(15,2) |                |
+| profit_or_loss   | 총 수익/손실    | DECIMAL(15,2) |                |
+| created_at       | 생성일         | DATETIME      |                |
+| updated_at       | 수정일         | DATETIME      |                |
+
+---
+
+### 5. 보유 자산 테이블 (Asset Table)
+| 컬럼명           | 설명            | 자료형         | 제약조건        |
+|------------------|----------------|---------------|----------------|
+| asset_id         | 자산 ID         | BIGINT        | PK             |
+| portfolio_id     | 포트폴리오 ID   | BIGINT        | FK (Portfolio) |
+| crypto_symbol    | 가상화폐 심볼   | VARCHAR(10)   |                |
+| amount           | 보유 수량       | DECIMAL(18,8) |                |
+| average_price    | 평균 매수 가격  | DECIMAL(15,2) |                |
+| current_value    | 현재 평가 금액  | DECIMAL(15,2) |                |
+| created_at       | 생성일          | DATETIME      |                |
+| updated_at       | 수정일          | DATETIME      |                |
+
+---
+
+### 6. 커뮤니티 게시물 테이블 (Community Post Table)
 | 컬럼명     | 설명     | 자료형        | 제약조건        |
 |------------|----------|--------------|----------------|
 | post_id    | 게시물 ID| BIGINT       | PK             |
@@ -124,7 +151,7 @@
 
 ---
 
-### 5. 댓글 테이블 (Comment Table)
+### 7. 댓글 테이블 (Comment Table)
 | 컬럼명     | 설명      | 자료형        | 제약조건        |
 |------------|-----------|--------------|----------------|
 | comment_id | 댓글 ID   | BIGINT       | PK             |
