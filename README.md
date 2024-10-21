@@ -159,7 +159,3 @@
 | user_id    | 회원 ID   | BIGINT       | FK (User)      |
 | comment    | 댓글 내용 | TEXT         |                |
 | commented_at | 작성일  | DATETIME     |                |
-
-
-![ERD](https://github.com/user-attachments/assets/159e06d6-7680-479f-a4d8-d8327aee73b3)
-
