@@ -75,23 +75,27 @@
 
 ---
 
+*API에서 호출해서 계산하는 내용 : 현재 평가 금액, 코인 별 수익, 총 자산 평가 금액, 총 수익률, 총 수익
 # ERD
 
 ### 1. 회원 테이블 (User Table)
-| 컬럼명      | 설명       | 자료형        | 제약조건                 |
-|-------------|------------|--------------|-------------------------|
-| user_id     | 회원 ID     | BIGINT       | PK                      |
-| username    | 사용자명     | VARCHAR(20) |                         |
-| password    | 비밀번호     | VARCHAR(15) |                         |
-| email       | 이메일       | VARCHAR(50) |                         |
-| phone       | 연락처       | VARCHAR(20)  |                         |
-| role        | 역할         | VARCHAR(20)  |                         |
-| balance     | 잔액         | DECIMAL(18,8)| 기본값: 1,000,000 KRW  |
-| created_at  | 가입일       | DATETIME     |                         |
+| 컬럼명    | 설명         | 자료형        | 제약조건                 |
+|-----------|--------------|--------------|-------------------------|
+| user_id   | 회원 ID      | BIGINT       | PK                      |
+| username  | 사용자명      | VARCHAR(20)  | 고유값 (Unique)         |
+| password  | 비밀번호      | VARCHAR(15)  | 암호화 저장              |
+| email     | 이메일        | VARCHAR(50)  |                         |
+| phone     | 연락처        | VARCHAR(20)  |                         |
+| role      | 역할          | VARCHAR(20)  |                         |
+| balance   | 잔액          | DECIMAL(18,8)| 기본값: 1,000,000        |
+| debt      | 빚 금액       | DECIMAL(18,8)| 기본값: 0                |
+| created_at| 가입일        | DATETIME     |                         |
 
 ---
 
 ### 2. 거래 테이블 (Transaction Table)
+내역 조회에 사용됩니다.
+
 | 컬럼명          | 설명         | 자료형        | 제약조건        |
 |-----------------|--------------|--------------|----------------|
 | transaction_id  | 거래 ID      | BIGINT       | PK             |
@@ -107,38 +111,26 @@
 ## 3. 포트폴리오 테이블 (Portfolio Table)  
 사용자의 현재 총 투자 금액, 수익률, 손익 상태를 관리합니다.
 
-| 컬럼명            | 설명              | 자료형         | 제약조건            |
-|------------------|------------------|---------------|--------------------|
-| asset_id         | 자산 ID           | BIGINT        | PK                 |
-| portfolio_id     | 포트폴리오 ID     | BIGINT        | FK (User)          |
-| crypto_id        | 가상화폐 ID       | BIGINT        | FK (Cryptocurrency)|
-| amount           | 보유 수량         | DECIMAL(18,8) |                    |
-| average_price    | 평균 매수 가격    | DECIMAL(18,8) |                    |
-| current_value    | 현재 평가 금액    | DECIMAL(18,8) |                    |
-| created_at       | 생성일            | DATETIME      |                    |
-| updated_at       | 수정일            | DATETIME      |                    |
-
----
-
-## 3-1. 가상화폐 테이블 (Cryptocurrency Table)  
-사용자가 가진 가상화폐 종류
-
-| 컬럼명             | 설명             | 자료형         | 제약조건           |
-|-------------------|----------------|---------------|-------------------|
-| crypto_id         | 가상화폐 ID      | BIGINT        | PK                |
-| symbol            | 가상화폐 심볼    | VARCHAR(10)   | 유니크 (Unique)   |
-| name              | 가상화폐 이름    | VARCHAR(50)   |                   |
-| price             | 현재 시세        | DECIMAL(18,8) |                   |
+| 컬럼명       | 설명                        | 자료형         | 제약조건                 |
+|--------------|-----------------------------|---------------|--------------------------|
+| portfolio_id | 포트폴리오 ID                | BIGINT        | PK                       |
+| user_id      | 회원 ID                     | BIGINT        | FK (User)                |
+| coin_name    | 코인명 (심볼)               | VARCHAR(50)   | 예: Bitcoin (BTC)        |
+| amount       | 코인 보유 수량               | DECIMAL(18,8) |                          |
+| avg_price    | 평균 매수 가격               | DECIMAL(18,8) |                          |
+| created_at   | 생성일                      | DATETIME      |                          |
+| updated_at   | 수정일                      | DATETIME      |                          |
 
 ---
 
 ### 4. 커뮤니티 게시물 테이블 (Community Post Table)
-| 컬럼명     | 설명     | 자료형        | 제약조건        |
-|------------|----------|--------------|----------------|
-| post_id    | 게시물 ID| BIGINT       | PK             |
-| user_id    | 회원 ID  | BIGINT       | FK (User)      |
-| content    | 내용     | TEXT         |                |
-| created_at | 작성일   | DATETIME     |                |
+| 컬럼명        | 설명                 | 자료형        | 제약조건        |
+|---------------|----------------------|--------------|----------------|
+| post_id       | 게시물 ID            | BIGINT       | PK             |
+| user_id       | 회원 ID              | BIGINT       | FK (User)      |
+| portfolio_id  | 포트폴리오 ID         | BIGINT       | FK (Portfolio) |
+| content       | 내용                 | TEXT         |                |
+| created_at    | 작성일               | DATETIME     |                |
 
 ---
 
