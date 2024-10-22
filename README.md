@@ -79,12 +79,12 @@
 | 컬럼명      | 설명       | 자료형        | 제약조건                 |
 |-------------|------------|--------------|-------------------------|
 | user_id     | 회원 ID     | BIGINT       | PK                      |
-| username    | 사용자명     | VARCHAR(255) |                         |
-| password    | 비밀번호     | VARCHAR(255) |                         |
-| email       | 이메일       | VARCHAR(255) |                         |
-| phone       | 연락처       | VARCHAR(11)  |                         |
+| username    | 사용자명     | VARCHAR(20) |                         |
+| password    | 비밀번호     | VARCHAR(15) |                         |
+| email       | 이메일       | VARCHAR(50) |                         |
+| phone       | 연락처       | VARCHAR(20)  |                         |
 | role        | 역할         | VARCHAR(20)  |                         |
-| balance     | 잔액         | DECIMAL(15,2)| 기본값: 1,000,000 KRW  |
+| balance     | 잔액         | DECIMAL(18,8)| 기본값: 1,000,000 KRW  |
 | created_at  | 가입일       | DATETIME     |                         |
 
 ---
@@ -107,35 +107,22 @@
 |----------------|----------------|--------------|----------------|
 | ledger_id      | 원장 ID        | BIGINT       | PK             |
 | user_id        | 회원 ID        | BIGINT       | FK (User)      |
-| crypto_symbol  | 가상화폐 심볼  | VARCHAR(10)  |                |
-| total_investment | 총 투자 금액 | DECIMAL(15,2)|                |
+| crypto_symbol  | 가상화폐       | VARCHAR(30)  |                |
+| total_investment | 총 투자 금액 | DECIMAL(18,8)|                |
 | current_amount| 현재 보유 수량 | DECIMAL(18,8)|                |
-| profit_or_loss| 수익/손실 금액 | DECIMAL(15,2)|                |
-
+| profit_or_loss| 수익/손실 금액 | DECIMAL(18,8)|                |
+| debt_amount    | 빚             | DECIMAL(18,8)|                |
 ---
 
 ### 4.포트폴리오 테이블 (Portfolio Table)
-
-| 컬럼명           | 설명           | 자료형         | 제약조건        |
-|------------------|----------------|---------------|----------------|
-| portfolio_id     | 포트폴리오 ID  | BIGINT        | PK             |
-| user_id          | 회원 ID        | BIGINT        | FK (User)      |
-| total_investment | 총 투자 금액    | DECIMAL(15,2) |                |
-| profit_or_loss   | 총 수익/손실    | DECIMAL(15,2) |                |
-| created_at       | 생성일         | DATETIME      |                |
-| updated_at       | 수정일         | DATETIME      |                |
-
----
-
-### 5. 보유 자산 테이블 (Asset Table)
 | 컬럼명           | 설명            | 자료형         | 제약조건        |
 |------------------|----------------|---------------|----------------|
 | asset_id         | 자산 ID         | BIGINT        | PK             |
 | portfolio_id     | 포트폴리오 ID   | BIGINT        | FK (Portfolio) |
-| crypto_symbol    | 가상화폐 심볼   | VARCHAR(10)   |                |
+| crypto_symbol    | 가상화폐        | VARCHAR(30)   |                |
 | amount           | 보유 수량       | DECIMAL(18,8) |                |
-| average_price    | 평균 매수 가격  | DECIMAL(15,2) |                |
-| current_value    | 현재 평가 금액  | DECIMAL(15,2) |                |
+| average_price    | 평균 매수 가격  | DECIMAL(18,8) |                |
+| current_value    | 현재 평가 금액  | DECIMAL(18,8) |                |
 | created_at       | 생성일          | DATETIME      |                |
 | updated_at       | 수정일          | DATETIME      |                |
 
