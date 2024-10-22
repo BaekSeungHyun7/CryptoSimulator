@@ -148,4 +148,5 @@
 
 ERD 관계도
 
-![ERD](https://github.com/user-attachments/assets/89e9e2f8-fab5-4ea9-b2e3-b1211fa7cc53)
+![0](https://github.com/user-attachments/assets/3dd63726-e156-4bda-9030-239b16b5ab95)
+
