@@ -83,12 +83,12 @@
 |-----------|--------------|--------------|-------------------------|
 | user_id   | 회원 ID      | BIGINT       | PK                      |
 | username  | 사용자명      | VARCHAR(20)  | 고유값 (Unique)         |
-| password  | 비밀번호      | VARCHAR(15)  | 암호화 저장              |
+| password  | 비밀번호      | VARCHAR(20)  | 암호화 저장              |
 | email     | 이메일        | VARCHAR(50)  |                         |
 | phone     | 연락처        | VARCHAR(20)  |                         |
 | role      | 역할          | VARCHAR(20)  |                         |
-| balance   | 잔액          | DECIMAL(18,8)| 기본값: 1,000,000        |
-| debt      | 빚 금액       | DECIMAL(18,8)| 기본값: 0                |
+| balance   | 잔액          | DECIMAL(20,8)| 기본값: 1,000,000        |
+| debt      | 빚 금액       | DECIMAL(20,8)| 기본값: 0                |
 | debt_ref_time| 빚 초기화 시간       | DATETIME     |                         |
 | created_at| 가입일        | DATETIME     |                         |
 
@@ -103,8 +103,8 @@
 | user_id         | 회원 ID      | BIGINT       | FK (User)      |
 | crypto_symbol   | 가상화폐 종류| VARCHAR(10)  |                |
 | transaction_type| 거래 유형    | ENUM('BUY', 'SELL') |            |
-| amount          | 거래 수량    | DECIMAL(18,8)|                |
-| price           | 거래 가격    | DECIMAL(15,2)|                |
+| amount          | 거래 수량    | DECIMAL(20,8)|                |
+| price           | 거래 가격    | DECIMAL(20,8)|                |
 | transaction_time| 거래 일시    | DATETIME     |                |
 
 ---
@@ -116,9 +116,10 @@
 |--------------|-----------------------------|---------------|--------------------------|
 | portfolio_id | 포트폴리오 ID                | BIGINT        | PK                       |
 | user_id      | 회원 ID                     | BIGINT        | FK (User)                |
-| coin_name    | 코인명 (심볼)               | VARCHAR(50)   | 예: Bitcoin (BTC)        |
-| amount       | 코인 보유 수량               | DECIMAL(18,8) |                          |
-| avg_price    | 평균 매수 가격               | DECIMAL(18,8) |                          |
+| coin_name    | 코인명                     | VARCHAR(50)   |                          |
+| coin_symbol  | 코인 심볼(ex BTC)          | VARCHAR(50)   |                          |
+| amount       | 코인 보유 수량               | DECIMAL(20,8) |                          |
+| avg_price    | 평균 매수 가격               | DECIMAL(20,8) |                          |
 | created_at   | 생성일                      | DATETIME      |                          |
 | updated_at   | 수정일                      | DATETIME      |                          |
 
