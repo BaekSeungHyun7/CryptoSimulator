@@ -20,6 +20,20 @@
 - 새로고침 시 위 정보를 보여줍니다 (초/밀리초 단위 실시간 변동 갱신은 하지 않음)
 - 사용자가 요청시 최근 24시간 변동률 (24시간, 12시간, 6시간, 3시간, 1시간)을 제공
 
+표기할 내용
+
+|-------------------|----------------|---------------|
+| crypto_id         | 가상화폐 ID      | BIGINT        |
+| symbol            | 가상화폐 심볼    | VARCHAR(10)   |
+| name              | 가상화폐 이름    | VARCHAR(50)   |
+| market_cap        | 시가총액         | DECIMAL(18,8) |
+| circulating_supply| 유통량           | DECIMAL(18,8) |
+| price             | 현재 시세        | DECIMAL(18,8) |
+| change_24h        | 24시간 변동률    | DECIMAL(5,2)  |
+| created_at        | 생성일           | DATETIME      | 
+| updated_at        | 수정일           | DATETIME      |
+
+
 ### 2. 회원가입 및 CRUD 기능
 - 사용자 회원가입, 권한 부여, 로그인, 회원 정보 수정 및 삭제
 - **JWT 인증**을 통한 사용자 인증 및 권한 부여 시스템 구현
@@ -94,7 +108,7 @@
 |-----------------|--------------|--------------|----------------|
 | transaction_id  | 거래 ID      | BIGINT       | PK             |
 | user_id         | 회원 ID      | BIGINT       | FK (User)      |
-| crypto_symbol   | 가상화폐 심볼| VARCHAR(10)  |                |
+| crypto_symbol   | 가상화폐 종류| VARCHAR(10)  |                |
 | transaction_type| 거래 유형    | ENUM('BUY', 'SELL') |            |
 | amount          | 거래 수량    | DECIMAL(18,8)|                |
 | price           | 거래 가격    | DECIMAL(15,2)|                |
@@ -102,33 +116,35 @@
 
 ---
 
-### 3. 원장 테이블 (Ledger Table)
-| 컬럼명         | 설명           | 자료형        | 제약조건        |
-|----------------|----------------|--------------|----------------|
-| ledger_id      | 원장 ID        | BIGINT       | PK             |
-| user_id        | 회원 ID        | BIGINT       | FK (User)      |
-| crypto_symbol  | 가상화폐       | VARCHAR(30)  |                |
-| total_investment | 총 투자 금액 | DECIMAL(18,8)|                |
-| current_amount| 현재 보유 수량 | DECIMAL(18,8)|                |
-| profit_or_loss| 수익/손실 금액 | DECIMAL(18,8)|                |
-| debt_amount    | 빚             | DECIMAL(18,8)|                |
----
+## 3. 포트폴리오 테이블 (Portfolio Table)  
+사용자의 현재 총 투자 금액, 수익률, 손익 상태를 관리합니다.
 
-### 4.포트폴리오 테이블 (Portfolio Table)
-| 컬럼명           | 설명            | 자료형         | 제약조건        |
-|------------------|----------------|---------------|----------------|
-| asset_id         | 자산 ID         | BIGINT        | PK             |
-| portfolio_id     | 포트폴리오 ID   | BIGINT        | FK (Portfolio) |
-| crypto_symbol    | 가상화폐        | VARCHAR(30)   |                |
-| amount           | 보유 수량       | DECIMAL(18,8) |                |
-| average_price    | 평균 매수 가격  | DECIMAL(18,8) |                |
-| current_value    | 현재 평가 금액  | DECIMAL(18,8) |                |
-| created_at       | 생성일          | DATETIME      |                |
-| updated_at       | 수정일          | DATETIME      |                |
+| 컬럼명            | 설명              | 자료형         | 제약조건            |
+|------------------|------------------|---------------|--------------------|
+| asset_id         | 자산 ID           | BIGINT        | PK                 |
+| portfolio_id     | 포트폴리오 ID     | BIGINT        | FK (User)          |
+| crypto_id        | 가상화폐 ID       | BIGINT        | FK (Cryptocurrency)|
+| amount           | 보유 수량         | DECIMAL(18,8) |                    |
+| average_price    | 평균 매수 가격    | DECIMAL(18,8) |                    |
+| current_value    | 현재 평가 금액    | DECIMAL(18,8) |                    |
+| created_at       | 생성일            | DATETIME      |                    |
+| updated_at       | 수정일            | DATETIME      |                    |
 
 ---
 
-### 6. 커뮤니티 게시물 테이블 (Community Post Table)
+## 3-1. 가상화폐 테이블 (Cryptocurrency Table)  
+사용자가 가진 가상화폐 종류
+
+| 컬럼명             | 설명             | 자료형         | 제약조건           |
+|-------------------|----------------|---------------|-------------------|
+| crypto_id         | 가상화폐 ID      | BIGINT        | PK                |
+| symbol            | 가상화폐 심볼    | VARCHAR(10)   | 유니크 (Unique)   |
+| name              | 가상화폐 이름    | VARCHAR(50)   |                   |
+| price             | 현재 시세        | DECIMAL(18,8) |                   |
+
+---
+
+### 4. 커뮤니티 게시물 테이블 (Community Post Table)
 | 컬럼명     | 설명     | 자료형        | 제약조건        |
 |------------|----------|--------------|----------------|
 | post_id    | 게시물 ID| BIGINT       | PK             |
@@ -138,7 +154,7 @@
 
 ---
 
-### 7. 댓글 테이블 (Comment Table)
+### 5. 댓글 테이블 (Comment Table)
 | 컬럼명     | 설명      | 자료형        | 제약조건        |
 |------------|-----------|--------------|----------------|
 | comment_id | 댓글 ID   | BIGINT       | PK             |
