@@ -89,6 +89,7 @@
 | role      | 역할          | VARCHAR(20)  |                         |
 | balance   | 잔액          | DECIMAL(18,8)| 기본값: 1,000,000        |
 | debt      | 빚 금액       | DECIMAL(18,8)| 기본값: 0                |
+| debt_ref_time| 빚 초기화 시간       | DATETIME     |                         |
 | created_at| 가입일        | DATETIME     |                         |
 
 ---
