@@ -123,6 +123,7 @@
 
 ---
 
+
 ### 4. 커뮤니티 게시물 테이블 (Community Post Table)
 | 컬럼명        | 설명                 | 자료형        | 제약조건        |
 |---------------|----------------------|--------------|----------------|
@@ -142,3 +143,7 @@
 | user_id    | 회원 ID   | BIGINT       | FK (User)      |
 | comment    | 댓글 내용 | TEXT         |                |
 | commented_at | 작성일  | DATETIME     |                |
+
+ERD 관계도
+
+![ERD](https://github.com/user-attachments/assets/89e9e2f8-fab5-4ea9-b2e3-b1211fa7cc53)
