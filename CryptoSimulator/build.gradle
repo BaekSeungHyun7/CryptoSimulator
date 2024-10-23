@@ -1,35 +1,40 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.3.4'
-	id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.baeksh'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()  // Maven Central 저장소 사용
 }
 
-dependencies {
+dependencies { //고치면 전체 프로젝트 디렉토리 -> gradle -> 리프레쉬
     // Spring Boot Web Starter (REST API)
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    
+    // JSON
+    implementation 'org.springframework.boot:spring-boot-starter-json'
+    implementation 'org.json:json:20230227'
+    
+    //db
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'mysql:mysql-connector-java'
 
     // Spring Security (JWT 인증)
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-    // Spring Data JPA (ORM)
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-    // MySQL Driver
-    runtimeOnly 'mysql:mysql-connector-java'
+    // MySQL Driver (버전 명시)
+    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
@@ -40,8 +45,10 @@ dependencies {
 
     // Test Dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mockito:mockito-core:5.5.0'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
+
