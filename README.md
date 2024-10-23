@@ -148,5 +148,6 @@
 
 ERD 관계도
 
-![0](https://github.com/user-attachments/assets/3dd63726-e156-4bda-9030-239b16b5ab95)
+![3](https://github.com/user-attachments/assets/88fdcfe6-532c-4a68-8c7f-da8809d04ad9)
+
 
