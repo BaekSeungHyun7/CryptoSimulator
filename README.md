@@ -15,10 +15,10 @@
 
 ### 1. 가상화폐 정보 제공
 - 실시간으로 가상화폐 정보(가격, 시가총액, 24시간 변동률 등)를 제공
-- API 호출 방식 사용 (https://api.coinpaprika.com/)
+- 업비트 Open API 사용 (https://upbit.com/service_center/open_api_guide)
+- API 호출 방식 사용 (예시 : https://api.upbit.com/v1/market/all)
 - 초당 API 요청 수 제한에 따른 **시간 당 호출 횟수 제한** 고려
 - 새로고침 시 위 정보를 보여줍니다 (초/밀리초 단위 실시간 변동 갱신은 하지 않음)
-- 사용자가 요청시 최근 24시간 변동률 (24시간, 12시간, 6시간, 3시간, 1시간)을 제공
 
 표기할 내용 : 이름 심볼 시가총액 유통량 현재시세 변동률(24시간)
 
@@ -101,7 +101,7 @@
 |-----------------|--------------|--------------|----------------|
 | transaction_id  | 거래 ID      | BIGINT       | PK             |
 | user_id         | 회원 ID      | BIGINT       | FK (User)      |
-| crypto_symbol   | 가상화폐 종류| VARCHAR(10)  |                |
+| crypto_pk       | 가상화폐 PK         | VARCHAR(10)   |                |
 | transaction_type| 거래 유형    | ENUM('BUY', 'SELL') |            |
 | amount          | 거래 수량    | DECIMAL(20,8)|                |
 | price           | 거래 가격    | DECIMAL(20,8)|                |
@@ -116,13 +116,13 @@
 |--------------|-----------------------------|---------------|--------------------------|
 | portfolio_id | 포트폴리오 ID                | BIGINT        | PK                       |
 | user_id      | 회원 ID                     | BIGINT        | FK (User)                |
-| coin_name    | 코인명                     | VARCHAR(50)   |                          |
-| coin_symbol  | 코인 심볼(ex BTC)          | VARCHAR(50)   |                          |
+| crypto_pk    | 가상화폐 PK                 | VARCHAR(10)   |                |
 | amount       | 코인 보유 수량               | DECIMAL(20,8) |                          |
 | avg_price    | 평균 매수 가격               | DECIMAL(20,8) |                          |
 | created_at   | 생성일                      | DATETIME      |                          |
 | updated_at   | 수정일                      | DATETIME      |                          |
 
+가상화폐 PK (예시: https://api.upbit.com/v1/ticker?markets=KRW-BTC에서 KRW-BTC)
 ---
 
 
@@ -131,7 +131,7 @@
 |---------------|----------------------|--------------|----------------|
 | post_id       | 게시물 ID            | BIGINT       | PK             |
 | user_id       | 회원 ID              | BIGINT       | FK (User)      |
-| portfolio_id  | 포트폴리오 ID         | BIGINT       | FK (Portfolio) |
+| portfolio_snapshot | 포트폴리오 스냅샷 JSON  | TEXT          |                |
 | content       | 내용                 | TEXT         |                |
 | created_at    | 작성일               | DATETIME     |                |
 
