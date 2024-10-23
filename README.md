@@ -122,7 +122,6 @@
 | created_at   | 생성일                      | DATETIME      |                          |
 | updated_at   | 수정일                      | DATETIME      |                          |
 
-###가상화폐 PK (예시: https://api.upbit.com/v1/ticker?markets=KRW-BTC에서 KRW-BTC)
 ---
 
 
