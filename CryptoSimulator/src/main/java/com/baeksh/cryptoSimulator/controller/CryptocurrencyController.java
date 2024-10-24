@@ -13,7 +13,7 @@ import java.util.List;
 public class CryptocurrencyController {
 
     /**
-     * 가상화폐 목록을 가져오는 GET API 엔드포인트입니다.
+     * 가상화폐 목록을 가져오는 GET API 엔드포인트
      *
      * @param page 페이지 번호 (기본값: 1)
      * @param size 페이지 크기 (기본값: 10)
