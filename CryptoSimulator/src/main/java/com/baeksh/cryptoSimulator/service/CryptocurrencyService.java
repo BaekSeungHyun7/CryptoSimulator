@@ -1,78 +1,101 @@
 package com.baeksh.cryptoSimulator.service;
 
+import com.baeksh.cryptoSimulator.dto.MarketDTO;
+import com.baeksh.cryptoSimulator.dto.TickerDTO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.*;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CryptocurrencyService {
 
+    //RestTemplate 인스턴스
     private final RestTemplate restTemplate;
 
-    public CryptocurrencyService(RestTemplate restTemplate) {
-      this.restTemplate = restTemplate;
+    /**
+     * 가상화폐 목록을 가져오고 TickerDTO 객체로 변환하여 반환합니다.
+     *
+     * @param page 페이지 번호
+     * @param size 페이지 크기
+     * @return TickerDTO 객체의 리스트
+     */
+    public List<TickerDTO> getAllCryptocurrencies(int page, int size) {
+        // 시장 데이터
+        List<MarketDTO> markets = fetchMarkets();
+        // KRW 마켓필터링
+        List<MarketDTO> krwMarkets = filterKRWMarkets(markets);
+        // 심볼
+        String marketSymbols = krwMarkets.stream()
+                .map(MarketDTO::getMarket)
+                .collect(Collectors.joining(","));
+        //시세정보
+        List<TickerDTO> tickerData = fetchTickerData(marketSymbols);
+
+        // MarketDTO의 한국어명과 심볼을 TickerDTO에 매핑
+        Map<String, String> koreanNameMap = krwMarkets.stream()
+                .collect(Collectors.toMap(MarketDTO::getMarket, MarketDTO::getKorean_name));
+
+        // TickerDTO 객체에 심볼과 한국어 이름 설정
+        return tickerData.stream()
+                .peek(ticker -> {
+                    String[] parts = ticker.getMarket().split("-");
+                    ticker.setSymbol(parts[1]);  // 예: KRW-BTC은 비트코인 BTC
+                    ticker.setKoreanName(koreanNameMap.get(ticker.getMarket()));  // 한국어명 매핑
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 모든 시장 데이터를 가져오는 메서드
+     *
+     * @return MarketDTO 객체의 리스트
+     */
+    private List<MarketDTO> fetchMarkets() {
+        ResponseEntity<List<MarketDTO>> response = restTemplate.exchange(
+            "https://api.upbit.com/v1/market/all",
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<MarketDTO>>() {}
+        );
+        return response.getBody();
     }
     
-    
     /**
-     * 가상화폐 목록을 가져와 필요한 순서와 데이터로 변환
-     * @return 정렬된 가상화폐 목록 (List<Map<String, Object>>)
+     * KRW 마켓만 필터링
+     *
+     * @param markets 전체 시장 목록
+     * @return KRW 마켓만 포함된 MarketDTO 객체의 리스트
      */
-    public List<Map<String, Object>> getAllCryptocurrencies() {
-      String marketUrl = "https://api.upbit.com/v1/market/all";
-      String tickerUrl = "https://api.upbit.com/v1/ticker?markets=";
+    private List<MarketDTO> filterKRWMarkets(List<MarketDTO> markets) {
+        return markets.stream()
+                .filter(m -> m.getMarket().startsWith("KRW-")) //KRW 필터링
+                .collect(Collectors.toList());
+    }
 
-      // 1. 모든 코인 정보 가져오기 (한국명 포함)
-      List<Map<String, Object>> markets = restTemplate.getForObject(marketUrl, List.class);
-
-      // 2. 필요한 코인만 필터링 (KRW 시장)
-      List<Map<String, Object>> krwMarkets = markets.stream()
-              .filter(m -> m.get("market").toString().startsWith("KRW-"))
-              .collect(Collectors.toList());
-
-      // 3. KRW 마켓 심볼 추출
-      String marketSymbols = krwMarkets.stream()
-              .map(m -> m.get("market").toString())
-              .collect(Collectors.joining(","));
-
-      // 4. 모든 코인의 상세 정보를 한 번의 호출로 가져오기
-      // 호출 제한용, 409
-      List<Map<String, Object>> tickerData = restTemplate.getForObject(tickerUrl + marketSymbols, List.class);
-
-      // 5. 결과 리스트 구성
-      List<Map<String, Object>> result = new ArrayList<>();
-      int rank = 1;
-
-      for (Map<String, Object> ticker : tickerData) {
-          String marketSymbol = ticker.get("market").toString(); //KRW-BTC
-          String symbol = marketSymbol.split("-")[1]; //BTC
-
-          // 해당 마켓의 한국명 찾기
-          String koreanName = krwMarkets.stream()
-                  .filter(m -> m.get("market").equals(marketSymbol))
-                  .map(m -> m.get("korean_name").toString())
-                  .findFirst()
-                  .orElse("N/A");
-
-          // 6. 필요한 데이터 추출 및 정리
-          Map<String, Object> cryptoInfo = new LinkedHashMap<>();
-          cryptoInfo.put("rank", rank++);
-          cryptoInfo.put("name_korean", koreanName);
-          cryptoInfo.put("symbol", symbol);
-          cryptoInfo.put("price_krw", ticker.get("trade_price"));
-          cryptoInfo.put("market_cap", ticker.get("acc_trade_price"));
-          cryptoInfo.put("volume_24h", ticker.get("acc_trade_volume_24h"));
-          cryptoInfo.put("change_24h", ticker.get("signed_change_rate"));
-          
-          result.add(cryptoInfo);
-      }
-
-      return result;
-  }
+    /**
+     * 주어진 심볼에 대한 시세 정보
+     *
+     * @param marketSymbols 시장 심볼 리스트
+     * @return TickerDTO 객체의 리스트
+     */
+    private List<TickerDTO> fetchTickerData(String marketSymbols) {
+        ResponseEntity<List<TickerDTO>> response = restTemplate.exchange(
+            "https://api.upbit.com/v1/ticker?markets=" + marketSymbols,
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<TickerDTO>>() {}
+        );
+        return response.getBody(); //API 반환
+    }
 }
 
 

@@ -20,7 +20,7 @@ repositories {
 dependencies { //고치면 전체 프로젝트 디렉토리 -> gradle -> 리프레쉬
     // Spring Boot Web Starter (REST API)
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
     // JSON
     implementation 'org.springframework.boot:spring-boot-starter-json'
     implementation 'org.json:json:20230227'
@@ -50,5 +50,9 @@ dependencies { //고치면 전체 프로젝트 디렉토리 -> gradle -> 리프�
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-parameters']
 }
 
