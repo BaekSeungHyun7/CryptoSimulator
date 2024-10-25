@@ -42,15 +42,17 @@ public class CryptocurrencyService {
 
         // MarketDTO의 한국어명과 심볼을 TickerDTO에 매핑
         Map<String, String> koreanNameMap = krwMarkets.stream()
-                .collect(Collectors.toMap(MarketDTO::getMarket, MarketDTO::getKorean_name));
+                .collect(Collectors.toMap(MarketDTO::getMarket, MarketDTO::getKoreanName));
 
-        // TickerDTO 객체에 심볼과 한국어 이름 설정
+        // 페이징
         return tickerData.stream()
                 .peek(ticker -> {
                     String[] parts = ticker.getMarket().split("-");
                     ticker.setSymbol(parts[1]);  // 예: KRW-BTC은 비트코인 BTC
                     ticker.setKoreanName(koreanNameMap.get(ticker.getMarket()));  // 한국어명 매핑
                 })
+                .skip((page - 1) * size)
+                .limit(size)
                 .collect(Collectors.toList());
     }
 
@@ -97,6 +99,7 @@ public class CryptocurrencyService {
         return response.getBody(); //API 반환
     }
 }
+
 
 
 /* 호출 데이터 목록

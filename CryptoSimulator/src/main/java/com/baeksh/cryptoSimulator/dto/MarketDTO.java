@@ -1,5 +1,6 @@
 package com.baeksh.cryptoSimulator.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,5 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MarketDTO {
     private String market;
-    private String korean_name;
+
+    @JsonProperty("korean_name")
+    private String koreanName;
 }
+
