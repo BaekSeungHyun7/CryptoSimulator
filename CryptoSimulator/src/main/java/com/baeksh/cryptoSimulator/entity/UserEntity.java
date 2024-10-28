@@ -28,11 +28,17 @@ public class UserEntity {
     private String phone;  // 사용자 연락처
 
     @Column(nullable = false)
-    private String role;  // 사용자 역할 (예: ADMIN, USER)
+    private String role;  // 사용자 역할
 
     @Column(nullable = false)
     private double balance = 1000000;  // 초기 잔액 100만 원 설정
 
     @Column(nullable = false)
     private double debt = 0;  // 초기 빚 0원 설정
+    
+    /*
+    @Column(nullable = false)
+    private boolean emailVerified = false;  // 이메일 인증 여부
+    //다른 테이블을 추가해야할 것 같은 상태
+    */
 }
