@@ -28,7 +28,7 @@ public class UserEntity {
     private String phone;  // 사용자 연락처
 
     @Column(nullable = false)
-    private String role;  // 사용자 역할
+    private String role;  // 사용자 역할 //ADMIN USER MODERATOR
 
     @Column(nullable = false)
     private double balance = 1000000;  // 초기 잔액 100만 원 설정
