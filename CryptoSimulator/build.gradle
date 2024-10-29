@@ -21,6 +21,7 @@ dependencies { //고치면 전체 프로젝트 디렉토리 -> gradle -> 리프�
     // Spring Boot Web Starter (REST API)
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
+    
     // JSON
     implementation 'org.springframework.boot:spring-boot-starter-json'
     implementation 'org.json:json:20230227'
@@ -46,6 +47,18 @@ dependencies { //고치면 전체 프로젝트 디렉토리 -> gradle -> 리프�
     // Test Dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mockito:mockito-core:5.5.0'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+	
+	
+	//JWT
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	
+	//JAXB API
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+	
 }
 
 tasks.named('test') {
@@ -53,6 +66,6 @@ tasks.named('test') {
 }
 
 tasks.withType(JavaCompile) {
-    options.compilerArgs += ['-parameters']
+    options.compilerArgs << "-parameters"
 }
 
