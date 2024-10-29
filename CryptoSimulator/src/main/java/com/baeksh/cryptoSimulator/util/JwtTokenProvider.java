@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -44,4 +45,18 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, base64SecretKey)
                 .compact();
     }
+    
+    
+    //토큰 -> userId를 추출하는 메서드
+    public Long getUserIdFromToken(Authentication authentication) {
+        String token = authentication.getCredentials().toString();
+        Claims claims = Jwts.parser()
+                .setSigningKey(DatatypeConverter.printBase64Binary(secretKey.getBytes()))
+                .parseClaimsJws(token)
+                .getBody();
+        return Long.parseLong(claims.getSubject());
+    }
+    
+    
+    
 }
