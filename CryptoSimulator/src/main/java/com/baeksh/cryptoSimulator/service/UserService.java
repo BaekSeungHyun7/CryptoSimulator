@@ -46,13 +46,15 @@ public class UserService {
     // 로그인 & JWT 반환
     public String login(UserDto.Login request) {
         // 사용자 인증 시도
-        Authentication authentication = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+            request.getUsername(), request.getPassword()
+            );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 사용자 조회
         UserEntity user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         // JWT 토큰 생성 및 반환
-        return jwtTokenProvider.createToken(user.getUsername(), user.getRole());
+        return jwtTokenProvider.createToken(user.getUsername(), user.getRole().name());
     }
 
     //사용자 정보 업데이트

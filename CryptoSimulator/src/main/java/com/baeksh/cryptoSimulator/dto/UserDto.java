@@ -1,5 +1,7 @@
 package com.baeksh.cryptoSimulator.dto;
 
+
+import com.baeksh.cryptoSimulator.entity.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +13,7 @@ public class UserDto {
         private String password;  // 비밀번호
         private String email;  // 이메일
         private String phone;  // 연락처
-        private String role;  // 사용자 역할
+        private Role role;  // 사용자 역할
     }
 
     @Getter

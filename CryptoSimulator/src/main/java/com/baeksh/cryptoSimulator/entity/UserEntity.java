@@ -27,8 +27,10 @@ public class UserEntity {
     @Column(length = 20)
     private String phone;  // 사용자 연락처
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role;  // 사용자 역할 //ADMIN USER MODERATOR
+    private Role role;  // 사용자 역할 (ADMIN, USER, MODERATOR)
+
 
     @Column(nullable = false)
     private double balance = 1000000;  // 초기 잔액 100만 원 설정
