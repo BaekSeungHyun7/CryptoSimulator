@@ -17,12 +17,12 @@ public class UserEntity {
 
     @Column(unique = true, nullable = false, length = 20)
     private String username;  // 사용자 이름 (고유값)
+    
+    @Column(unique = true, nullable = false, length = 50)
+    private String email;  // 사용자 이메일
 
     @Column(nullable = false)
     private String password;  // 사용자 비밀번호 (암호화 저장)
-
-    @Column(nullable = false, length = 50)
-    private String email;  // 사용자 이메일
 
     @Column(length = 20)
     private String phone;  // 사용자 연락처
@@ -30,7 +30,6 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;  // 사용자 역할 (ADMIN, USER, MODERATOR)
-
 
     @Column(nullable = false)
     private double balance = 1000000;  // 초기 잔액 100만 원 설정
