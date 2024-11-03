@@ -19,9 +19,9 @@ public class PortfolioController {
 
   //사용자 포트폴리오 조회
   @GetMapping
-  public ResponseEntity<List<PortfolioDto>> getUserPortfolio(Authentication authentication) {
+  public ResponseEntity<PortfolioDto> getUserPortfolio(Authentication authentication) {
     Long userId = Long.parseLong(authentication.getName());
-    List<PortfolioDto> portfolio = portfolioService.getUserPortfolio(userId);
+    PortfolioDto portfolio = portfolioService.getUserPortfolio(userId);
     return ResponseEntity.ok(portfolio);
   }
 }

@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baeksh.cryptoSimulator.exception.CustomException;
 import com.baeksh.cryptoSimulator.exception.ErrorCode;
 import com.baeksh.cryptoSimulator.dto.PortfolioDto;
+import java.text.DecimalFormat;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.math.BigDecimal;
@@ -25,8 +27,6 @@ public class PortfolioService {
   private final PortfolioRepository portfolioRepository;
   private final TransactionRepository transactionRepository;
   private final UserRepository userRepository;
-
-  //API 가져오는 CryptocurrencyService 주입
   private final CryptocurrencyService cryptocurrencyService;
 
   // 초기 시드머니 제공 및 포트폴리오 생성
@@ -49,31 +49,78 @@ public class PortfolioService {
     if (user.getBalance() < 0) {
       user.setDebt(user.getDebt() + Math.abs(user.getBalance())); // 빚 증가
       userRepository.save(user);
+      
+      /*
+       * TO-DO
+       * 옵션 기능 구현할때 빚 패널티를 자세하게 설정
+       * */
       } 
   }
   
   
-  //사용자 ID로 포트폴리오 조회 후 포맷팅된 DTO로 반환
-  public List<PortfolioDto> getUserPortfolio(Long userId) {
-      UserEntity user = userRepository.findById(userId)
-              .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_FOR_PORTFOLIO));
-
-    return portfolioRepository.findByUser(user).stream()
-            .map(this::convertToDto)  // PortfolioEntity를 PortfolioDto로 변환
-            .collect(Collectors.toList());
-    
-  }
   
-  //PortfolioEntity를 PortfolioDto로 변환하는 메서드
-  private PortfolioDto convertToDto(PortfolioEntity portfolio) {
+  //사용자 ID로 포트폴리오 조회
+  public PortfolioDto getUserPortfolio(Long userId) {
+    UserEntity user = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+    List<PortfolioEntity> portfolios = portfolioRepository.findByUser(user);
+
+    // 포트폴리오 데이터 생성
+    List<PortfolioDto.CryptoInfo> cryptoInfoList = portfolios.stream()
+        .map(portfolio -> {
+            BigDecimal currentPrice = BigDecimal.valueOf(fetchCurrentPrice(portfolio.getCryptoSymbol()));
+            String profitPercentage = calculateProfitPercentage(
+                    BigDecimal.valueOf(portfolio.getAvgPrice()), currentPrice);
+
+            return new PortfolioDto.CryptoInfo(
+                portfolio.getCryptoSymbol(),
+                BigDecimal.valueOf(portfolio.getAmount()),
+                BigDecimal.valueOf(portfolio.getAvgPrice()),
+                currentPrice,
+                profitPercentage
+            );
+        })
+        .collect(Collectors.toList());
+
     return new PortfolioDto(
-            portfolio.getCryptoSymbol(),
-            BigDecimal.valueOf(portfolio.getAmount()),
-            BigDecimal.valueOf(portfolio.getAvgPrice())
+        user.getUsername(),
+        BigDecimal.valueOf(user.getBalance()),
+        BigDecimal.valueOf(user.getDebt()),
+        LocalDateTime.now(),
+        cryptoInfoList
     );
     
   }
+  
+  //실시간 가격 가져오는 메서드
+  private double fetchCurrentPrice(String cryptoSymbol) {
+    List<TickerDTO> tickerData = cryptocurrencyService.fetchTickerData(cryptoSymbol);
+    return tickerData.isEmpty() ? 0 : tickerData.get(0).getTradePrice(); // 현재 시세 반환    
+  }
+  
+  
+  //수익률 계산 (퍼센트)
+  private String calculateProfitPercentage(BigDecimal avgPrice, BigDecimal currentPrice) {
+    if (avgPrice.compareTo(BigDecimal.ZERO) == 0) return "0.00";
+    
+    // 수익률은 (현재 가격 - 평균 매수가) / 평균 매수가 * 100 -> 
+    BigDecimal profit = currentPrice.subtract(avgPrice)
+        .divide(avgPrice, 4, BigDecimal.ROUND_HALF_UP)
+        .multiply(BigDecimal.valueOf(100));
 
+    // 양수/음수 포맷팅
+    DecimalFormat df = new DecimalFormat("+0.00;-0.00");
+    return df.format(profit) + "%";
+    
+  }
+  
+  //사용자의 모든 가상화폐 보유 내역을 삭제
+  public void clearPortfolio(UserEntity user) {
+    portfolioRepository.deleteByUser(user);
+    
+  }
+  
   // 포트폴리오에 새 거래 반영
   public void updatePortfolio(UserEntity user, String cryptoSymbol, double amount, String transactionType) {
     double currentPrice = fetchCurrentPrice(cryptoSymbol); // 실시간 시세 정보 가져오기
@@ -102,7 +149,7 @@ public class PortfolioService {
         portfolio.setAmount(portfolio.getAmount() - amount);
         user.setBalance(user.getBalance() + (amount * currentPrice)); // 잔액 증가
       }
-    
+
     portfolioRepository.save(portfolio);
     transactionRepository.save(TransactionEntity.builder()
         .user(user)
@@ -115,13 +162,5 @@ public class PortfolioService {
     applyDebtPenalty(user);
     
   }
-  
-  // 실시간 가격 가져오는 메서드
-  private double fetchCurrentPrice(String cryptoSymbol) {
-    //2
-    List<TickerDTO> tickerData = cryptocurrencyService.fetchTickerData(cryptoSymbol);
-    return tickerData.isEmpty() ? 0 : tickerData.get(0).getTradePrice(); // 현재 시세 반환   
-  }
-  
   
 }

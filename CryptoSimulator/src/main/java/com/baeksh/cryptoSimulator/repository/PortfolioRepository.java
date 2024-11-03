@@ -15,4 +15,7 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long
   
   //유저별 코인 보유 여부
   Optional<PortfolioEntity> findByUserAndCryptoSymbol(UserEntity user, String cryptoSymbol);
+  
+  //사용자 포트폴리오 삭제
+  void deleteByUser(UserEntity user);
 }
