@@ -18,12 +18,5 @@ public class CustomSerializer {
       
     }
   }
-  
-  
-  
+ 
 }
-
-/*
- * https://www.baeldung.com/jackson-custom-serialization
- * https://devfunny.tistory.com/861
- */

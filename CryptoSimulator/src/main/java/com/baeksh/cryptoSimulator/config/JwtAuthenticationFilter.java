@@ -15,6 +15,7 @@ import java.io.IOException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtTokenProvider jwtTokenProvider;
+  private static final String BEARER_PREFIX = "Bearer ";
 
   public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
     this.jwtTokenProvider = jwtTokenProvider;
@@ -27,30 +28,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String jwt = getJwtFromRequest(request);
 
     if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
-      Long userId = jwtTokenProvider.getUserIdFromToken(jwt);
-
-      UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-          userId, null, jwtTokenProvider.getAuthoritiesFromToken(jwt));
-      authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-      SecurityContextHolder.getContext().setAuthentication(authentication);
+      setAuthentication(jwt, request);
     }
 
     filterChain.doFilter(request, response);
   }
 
-  
   private String getJwtFromRequest(HttpServletRequest request) {
     String bearerToken = request.getHeader("Authorization");
     
-    if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-      return bearerToken.substring(7); //Bearer 의 공백까지 포함해서 7
+    if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+      return bearerToken.substring(BEARER_PREFIX.length());
     }
     
     return null;
   }
-}
 
-/*에러
-//https://buly.kr/4mba4Sx
-*/
+  private void setAuthentication(String jwt, HttpServletRequest request) {
+    Long userId = jwtTokenProvider.getUserIdFromToken(jwt);
+    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+        userId, null, jwtTokenProvider.getAuthoritiesFromToken(jwt));
+    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+  }
+}
