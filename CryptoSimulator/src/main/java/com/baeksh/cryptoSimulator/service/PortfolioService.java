@@ -57,8 +57,6 @@ public class PortfolioService {
       } 
   }
   
-  
-  
   //사용자 ID로 포트폴리오 조회
   public PortfolioDto getUserPortfolio(Long userId) {
     UserEntity user = userRepository.findById(userId)
@@ -101,7 +99,7 @@ public class PortfolioService {
   
   
   //수익률 계산 (퍼센트)
-  private String calculateProfitPercentage(BigDecimal avgPrice, BigDecimal currentPrice) {
+  public String calculateProfitPercentage(BigDecimal avgPrice, BigDecimal currentPrice) {
     if (avgPrice.compareTo(BigDecimal.ZERO) == 0) return "0.00";
     
     // 수익률은 (현재 가격 - 평균 매수가) / 평균 매수가 * 100 -> 
