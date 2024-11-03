@@ -46,7 +46,8 @@ class PortfolioServiceTest {
     private PortfolioService portfolioService;
 
     private UserEntity user;
-
+     
+    
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
