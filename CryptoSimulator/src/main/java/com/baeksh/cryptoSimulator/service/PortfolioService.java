@@ -27,7 +27,7 @@ public class PortfolioService {
   private final UserRepository userRepository;
   private final CryptocurrencyService cryptocurrencyService;
 
-  // 초기 시드머니 발급 로직
+  // 초기 시드머니 발급
   public String initializePortfolio(Long userId) {
     UserEntity user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));

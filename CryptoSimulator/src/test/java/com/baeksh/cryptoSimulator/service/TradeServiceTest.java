@@ -65,7 +65,7 @@ class TradeServiceTest {
     tickerDTO.setMarket("KRW-BTC");
     tickerDTO.setSymbol("BTC");
     tickerDTO.setKoreanName("비트코인");
-    tickerDTO.setTradePrice(60000000.0);
+    tickerDTO.setTradePrice(95000000.0);
     tickerDTO.setAccTradePrice(0);
     tickerDTO.setAccTradeVolume24h(0);
     tickerDTO.setSignedChangeRate(0);
@@ -91,7 +91,7 @@ class TradeServiceTest {
     tickerDTO.setMarket("KRW-BTC");
     tickerDTO.setSymbol("BTC");
     tickerDTO.setKoreanName("비트코인");
-    tickerDTO.setTradePrice(30000000.0);
+    tickerDTO.setTradePrice(95000000.0);
     tickerDTO.setAccTradePrice(0);
     tickerDTO.setAccTradeVolume24h(0);
     tickerDTO.setSignedChangeRate(0);
@@ -117,7 +117,7 @@ class TradeServiceTest {
     tickerDTO.setMarket("KRW-BTC");
     tickerDTO.setSymbol("BTC");
     tickerDTO.setKoreanName("비트코인");
-    tickerDTO.setTradePrice(30000000.0);
+    tickerDTO.setTradePrice(95000000.0);
     tickerDTO.setAccTradePrice(0);
     tickerDTO.setAccTradeVolume24h(0);
     tickerDTO.setSignedChangeRate(0);

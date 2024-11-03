@@ -30,7 +30,7 @@ public class TradeService {
     updatePortfolio(user, tradeRequest.getCryptoSymbol(), tradeRequest.getAmount(), tradeRequest.getTransactionType());
   }
 
-  // 포트폴리오에 새 거래 반영
+  // 포트폴리오에 거래 내역 갱신
   public void updatePortfolio(UserEntity user, String cryptoSymbol, double amount, String transactionType) {
     double currentPrice = cryptocurrencyService.fetchCurrentPrice(cryptoSymbol);
     double totalCost = amount * currentPrice;
@@ -47,14 +47,12 @@ public class TradeService {
             .avgPrice(0)
             .build());
 
-    if (transactionType.equals("BUY")) {
-      // 매수 로직
+    if (transactionType.equals("BUY")) { // 매수
       double newTotalCost = (portfolio.getAmount() * portfolio.getAvgPrice()) + totalCost;
       portfolio.setAmount(portfolio.getAmount() + amount);
       portfolio.setAvgPrice(newTotalCost / portfolio.getAmount());
       user.setBalance(user.getBalance() - totalCost);
-    } else if (transactionType.equals("SELL")) {
-      // 매도 로직
+    } else if (transactionType.equals("SELL")) { // 매도
       if (portfolio.getAmount() < amount) {
         throw new CustomException(ErrorCode.INSUFFICIENT_HOLDINGS);
       }
