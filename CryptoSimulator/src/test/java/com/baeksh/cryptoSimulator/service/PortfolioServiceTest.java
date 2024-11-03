@@ -47,7 +47,7 @@ class PortfolioServiceTest {
 
     private UserEntity user;
      
-    
+    //세팅
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -56,7 +56,7 @@ class PortfolioServiceTest {
                 .username("testUser")
                 .password(new BCryptPasswordEncoder().encode("password"))
                 .balance(500000.0) // 50만 원 보유 중
-                .debtRefTime(LocalDateTime.now().minusDays(1)) // 마지막 시드머니 발급 24시간 경과
+                .debtRefTime(LocalDateTime.now().minusHours(24)) // 마지막 시드머니 발급 24시간 경과
                 .build();
     }
 
@@ -111,7 +111,7 @@ class PortfolioServiceTest {
     @Test
     void testInitializeSeedMoneyAllowed() {
         logger.info("24시간 경과 후 시드머니 발급 테스트");
-        user.setBalance(900000.0); // 잔액이 100만 원 미만으로 설정
+        user.setBalance(900000.0); // 잔액을 100만 원 미만으로 설정
         user.setDebtRefTime(LocalDateTime.now().minusDays(1)); // 마지막 발급 이후 24시간 경과
 
         portfolioService.initializePortfolio(user);
@@ -125,7 +125,7 @@ class PortfolioServiceTest {
     @Test
     void testInitializeSeedMoneyNotAllowed() {
         logger.info("24시간 이내 시드머니 재발급 불가 테스트");
-        user.setBalance(900000.0); // 잔액이 100만 원 미만으로 설정
+        user.setBalance(900000.0); // 잔액을 100만 원 미만으로 설정
         user.setDebtRefTime(LocalDateTime.now()); // 마지막 발급 이후 24시간 경과하지 않음
 
         CustomException exception = assertThrows(CustomException.class, () -> {
