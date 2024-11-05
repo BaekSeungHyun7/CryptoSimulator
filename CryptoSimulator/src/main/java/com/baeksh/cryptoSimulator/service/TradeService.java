@@ -4,6 +4,7 @@ import com.baeksh.cryptoSimulator.dto.TradeRequestDto;
 import com.baeksh.cryptoSimulator.entity.PortfolioEntity;
 import com.baeksh.cryptoSimulator.entity.TransactionEntity;
 import com.baeksh.cryptoSimulator.entity.UserEntity;
+import com.baeksh.cryptoSimulator.entity.TransactionType;
 import com.baeksh.cryptoSimulator.exception.CustomException;
 import com.baeksh.cryptoSimulator.exception.ErrorCode;
 import com.baeksh.cryptoSimulator.message.Message;
@@ -12,6 +13,7 @@ import com.baeksh.cryptoSimulator.repository.TransactionRepository;
 import com.baeksh.cryptoSimulator.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,8 @@ public class TradeService {
   private final CryptocurrencyService cryptocurrencyService;
 
   // 매수/매도 로직
-  public void executeTrade(Long userId, TradeRequestDto tradeRequest) {
+  @Transactional
+  public synchronized void executeTrade(Long userId, TradeRequestDto tradeRequest) {
     UserEntity user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_FOR_TRADE));
 
@@ -31,28 +34,23 @@ public class TradeService {
   }
 
   // 포트폴리오에 거래 내역 갱신
-  public void updatePortfolio(UserEntity user, String cryptoSymbol, double amount, String transactionType) {
+  public void updatePortfolio(UserEntity user, String cryptoSymbol, double amount, TransactionType transactionType) {
     double currentPrice = cryptocurrencyService.fetchCurrentPrice(cryptoSymbol);
     double totalCost = amount * currentPrice;
 
-    if (transactionType.equals("BUY") && user.getBalance() < totalCost) {
+    if (transactionType == TransactionType.BUY && user.getBalance() < totalCost) {
       throw new CustomException(ErrorCode.INSUFFICIENT_FUNDS);
     }
 
     PortfolioEntity portfolio = portfolioRepository.findByUserAndCryptoSymbol(user, cryptoSymbol)
-        .orElse(PortfolioEntity.builder()
-            .user(user)
-            .cryptoSymbol(cryptoSymbol)
-            .amount(0)
-            .avgPrice(0)
-            .build());
+        .orElseGet(() -> PortfolioEntity.defaultPortfolio(user, cryptoSymbol));
 
-    if (transactionType.equals("BUY")) { // 매수
+    if (transactionType == TransactionType.BUY) { // 매수
       double newTotalCost = (portfolio.getAmount() * portfolio.getAvgPrice()) + totalCost;
       portfolio.setAmount(portfolio.getAmount() + amount);
       portfolio.setAvgPrice(newTotalCost / portfolio.getAmount());
       user.setBalance(user.getBalance() - totalCost);
-    } else if (transactionType.equals("SELL")) { // 매도
+    } else if (transactionType == TransactionType.SELL) { // 매도
       if (portfolio.getAmount() < amount) {
         throw new CustomException(ErrorCode.INSUFFICIENT_HOLDINGS);
       }
@@ -81,3 +79,5 @@ public class TradeService {
     }
   }
 }
+
+

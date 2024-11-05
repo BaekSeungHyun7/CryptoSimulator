@@ -22,7 +22,10 @@ public class TransactionEntity {
     private UserEntity user;
 
     private String cryptoSymbol; // 거래한 가상화폐 심볼
-    private String transactionType; // 매수와 매도
+    
+    @Enumerated(EnumType.STRING)
+    private TransactionType transactionType; // 매수와 매도
+    
     private double amount; // 거래 수량
     private double price; // 거래 당시 가격
 

@@ -1,16 +1,23 @@
 package com.baeksh.cryptoSimulator.dto;
 
-import lombok.AllArgsConstructor;
+import com.baeksh.cryptoSimulator.entity.TransactionType;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class TradeRequestDto {
   private String cryptoSymbol;    // 가상화폐 심볼
   private double amount;          // 거래 수량
-  private String transactionType; // 거래 유형 (BUY와 SELL)
+  private TransactionType transactionType; // 거래 유형
+  
+  
+  //테스트용
+  public TradeRequestDto(String cryptoSymbol, double amount, TransactionType transactionType) {
+    this.cryptoSymbol = cryptoSymbol;
+    this.amount = amount;
+    this.transactionType = transactionType;
+  }
 }

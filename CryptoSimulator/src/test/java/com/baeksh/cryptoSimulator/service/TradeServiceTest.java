@@ -3,6 +3,7 @@ package com.baeksh.cryptoSimulator.service;
 import com.baeksh.cryptoSimulator.dto.TickerDTO;
 import com.baeksh.cryptoSimulator.dto.TradeRequestDto;
 import com.baeksh.cryptoSimulator.entity.UserEntity;
+import com.baeksh.cryptoSimulator.entity.TransactionType;  // TransactionType import 추가
 import com.baeksh.cryptoSimulator.exception.CustomException;
 import com.baeksh.cryptoSimulator.exception.ErrorCode;
 import com.baeksh.cryptoSimulator.repository.PortfolioRepository;
@@ -73,8 +74,7 @@ class TradeServiceTest {
     when(cryptocurrencyService.fetchTickerData("KRW-BTC"))
       .thenReturn(Collections.singletonList(tickerDTO));
 
-    TradeRequestDto request = new TradeRequestDto("KRW-BTC", 0.01, "BUY");
-
+    TradeRequestDto request = new TradeRequestDto("KRW-BTC", 0.01, TransactionType.BUY);
     CustomException exception = assertThrows(CustomException.class, () -> {
       tradeService.executeTrade(user.getUserId(), request);
     });
@@ -99,8 +99,7 @@ class TradeServiceTest {
     when(cryptocurrencyService.fetchTickerData("KRW-BTC"))
       .thenReturn(Collections.singletonList(tickerDTO));
 
-    TradeRequestDto request = new TradeRequestDto("KRW-BTC", 0.01, "BUY");
-
+    TradeRequestDto request = new TradeRequestDto("KRW-BTC", 0.01, TransactionType.BUY);
     tradeService.executeTrade(user.getUserId(), request);
 
     assertEquals(470000.0, user.getBalance(), 0.1);
@@ -125,8 +124,8 @@ class TradeServiceTest {
     when(cryptocurrencyService.fetchTickerData("KRW-BTC"))
       .thenReturn(Collections.singletonList(tickerDTO));
 
-    TradeRequestDto buyRequest = new TradeRequestDto("KRW-BTC", 0.01, "BUY");
-    TradeRequestDto sellRequest = new TradeRequestDto("KRW-BTC", 0.01, "SELL");
+    TradeRequestDto buyRequest = new TradeRequestDto("KRW-BTC", 0.01, TransactionType.BUY);
+    TradeRequestDto sellRequest = new TradeRequestDto("KRW-BTC", 0.01, TransactionType.SELL);  
 
     tradeService.executeTrade(user.getUserId(), buyRequest);
     tradeService.executeTrade(user.getUserId(), sellRequest);
@@ -137,4 +136,5 @@ class TradeServiceTest {
     verify(transactionRepository, times(2)).save(any());
   }
 }
+
 
