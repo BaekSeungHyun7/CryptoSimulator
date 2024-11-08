@@ -2,6 +2,7 @@ package com.baeksh.cryptoSimulator.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -37,9 +38,6 @@ public class UserEntity {
     @Column(nullable = false)
     private double debt = 0;  // 초기 빚 0원 설정
     
-    /*
-    @Column(nullable = false)
-    private boolean emailVerified = false;  // 이메일 인증 여부
-    //다른 테이블을 추가해야할 것 같은 상태
-    */
+    @Column(name = "debt_ref_time")
+    private LocalDateTime debtRefTime; // 시드머니 발급 시간
 }

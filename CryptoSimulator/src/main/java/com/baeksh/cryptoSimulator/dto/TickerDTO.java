@@ -3,27 +3,47 @@ package com.baeksh.cryptoSimulator.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TickerDTO {
-    private String market;                  // 마켓
-    private String symbol;                  // 줄임말
+  
+  //마켓
+  private String market;                 
+  
+  //줄임말
+  private String symbol;                  
 
-    @JsonProperty("korean_name")
-    private String koreanName;              // 한국어명
+  //한국어명
+  @JsonProperty("korean_name")
+  private String koreanName;
+  
+  //가격
+  @JsonProperty("trade_price")
+  private double tradePrice;              
 
-    @JsonProperty("trade_price")
-    private double tradePrice;              // 가격
+  @JsonProperty("acc_trade_price")
+  private double accTradePrice;
 
-    @JsonProperty("acc_trade_price")
-    private double accTradePrice;           // 시가총액
+  // 24시간 거래량
+  @JsonProperty("acc_trade_volume_24h")
+  private double accTradeVolume24h;
 
-    @JsonProperty("acc_trade_volume_24h")
-    private double accTradeVolume24h;       // 24시간 거래량
+  // 24시간 변동량
+  @JsonProperty("signed_change_rate")
+  private double signedChangeRate;       
+    
+  //포맷팅
+  @JsonProperty("trade_price_str")
+  private String tradePriceStr;
 
-    @JsonProperty("signed_change_rate")
-    private double signedChangeRate;        // 24시간 변동량
+  @JsonProperty("acc_trade_price_str")
+  private String accTradePriceStr;
+    
 }
