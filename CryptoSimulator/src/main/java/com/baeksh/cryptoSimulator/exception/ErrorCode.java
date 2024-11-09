@@ -14,7 +14,11 @@ public enum ErrorCode {
   USER_NOT_FOUND_FOR_TRADE("거래 사용자를 찾을 수 없습니다.", 404),
   USER_NOT_FOUND_FOR_PORTFOLIO("사용자의 포트폴리오를 찾을 수 없습니다.", 404),
   SEED_MONEY_ALREADY_ISSUED("24시간 이내에 시드머니가 이미 발급되었습니다.", 403),
-  SEED_MONEY_NOT_ALLOWED("잔액이 충분하여 시드머니 발급이 필요하지 않습니다.", 403);
+  SEED_MONEY_NOT_ALLOWED("잔액이 충분하여 시드머니 발급이 필요하지 않습니다.", 403),
+  ALREADY_RECOMMENDED("이미 추천한 게시물입니다.", 400),
+  COMMENT_NOT_FOUND("댓글을 찾을 수 없습니다.", 404),
+  POST_NOT_FOUND("게시물을 찾을 수 없습니다.", 404),
+  SERIALIZATION_ERROR("포트폴리오 데이터를 가져오는데 실패했습니다.",500);
 
   private final String message;
   private final int status;

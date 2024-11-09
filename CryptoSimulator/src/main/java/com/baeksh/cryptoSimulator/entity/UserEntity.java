@@ -40,4 +40,12 @@ public class UserEntity {
     
     @Column(name = "debt_ref_time")
     private LocalDateTime debtRefTime; // 시드머니 발급 시간
+    
+    public boolean isAdmin() {
+      return this.role == Role.ADMIN; //어드민
+    }
+    
+    public boolean isModeratorOrAdmin() {
+      return this.role == Role.ADMIN || this.role == Role.MODERATOR; //게시판 권한자
+    }
 }

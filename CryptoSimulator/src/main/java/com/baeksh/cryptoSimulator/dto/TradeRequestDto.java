@@ -13,7 +13,6 @@ public class TradeRequestDto {
   private double amount;          // 거래 수량
   private TransactionType transactionType; // 거래 유형
   
-  
   //테스트용
   public TradeRequestDto(String cryptoSymbol, double amount, TransactionType transactionType) {
     this.cryptoSymbol = cryptoSymbol;
