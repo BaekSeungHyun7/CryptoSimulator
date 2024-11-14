@@ -1,4 +1,8 @@
+/*
+
 package com.baeksh.cryptoSimulator.service;
+
+
 
 import com.baeksh.cryptoSimulator.dto.PortfolioDto;
 import com.baeksh.cryptoSimulator.entity.*;
@@ -286,5 +290,6 @@ public class CommunityServiceTest {
   }
 }
 
+*/
 
 

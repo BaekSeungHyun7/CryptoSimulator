@@ -2,25 +2,26 @@ package com.baeksh.cryptoSimulator.controller;
 
 import com.baeksh.cryptoSimulator.service.CommunityService;
 import com.baeksh.cryptoSimulator.service.PortfolioService;
-import com.baeksh.cryptoSimulator.entity.CommunityPost;
 import com.baeksh.cryptoSimulator.dto.CommentRequestDto;
 import com.baeksh.cryptoSimulator.dto.CommunityPostDto;
+import com.baeksh.cryptoSimulator.dto.CommunityPostResponseDto;
+import com.baeksh.cryptoSimulator.dto.IncludeSnapshotOption;
 import com.baeksh.cryptoSimulator.dto.PortfolioDto;
 import com.baeksh.cryptoSimulator.dto.PostUpdateRequestDto;
-import com.baeksh.cryptoSimulator.entity.Comment;
+import com.baeksh.cryptoSimulator.dto.CommentResponseDto;
 import com.baeksh.cryptoSimulator.entity.UserEntity;
 import com.baeksh.cryptoSimulator.message.Message;
 import com.baeksh.cryptoSimulator.repository.UserRepository;
 import com.baeksh.cryptoSimulator.exception.CustomException;
 import com.baeksh.cryptoSimulator.exception.ErrorCode;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import lombok.RequiredArgsConstructor;
-
 import java.util.List;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/community")
@@ -38,7 +39,7 @@ public class CommunityController {
    * @return 생성된 게시물 정보
    */
   @PostMapping("/post")
-  public ResponseEntity<CommunityPost> createPost(
+  public ResponseEntity<CommunityPostResponseDto> createPost(
       @RequestBody CommunityPostDto postDto, Authentication auth) {
 
     Long userId = Long.valueOf(auth.getPrincipal().toString());
@@ -46,17 +47,15 @@ public class CommunityController {
     UserEntity user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-    // 조건적으로 포트폴리오 스냅샷 불러오기
     PortfolioDto portfolioSnapshot = null;
-    if ("Y".equalsIgnoreCase(postDto.getIncludeSnapshot())) {
-        portfolioSnapshot = portfolioService.getUserPortfolio(userId);
+    if (IncludeSnapshotOption.isYes(postDto.getIncludeSnapshot())) {
+      portfolioSnapshot = portfolioService.getUserPortfolio(userId);
     }
 
-    // 게시글 생성 시 포트폴리오 스냅샷 포함
-    CommunityPost post = communityService.createPost(
+    CommunityPostResponseDto responseDto = communityService.createPost(
         user, postDto.getTitle(), postDto.getContent(), portfolioSnapshot);
 
-    return ResponseEntity.ok(post);
+    return ResponseEntity.ok(responseDto);
   }
 
   /**
@@ -64,12 +63,12 @@ public class CommunityController {
    * @param postId 조회할 게시물 ID
    * @return 조회된 게시물 정보
    */
-  @GetMapping("/post/{postId}")
-  public ResponseEntity<CommunityPost> getPost(@PathVariable Long postId) {
+  @GetMapping("/post/{post-id}")
+  public ResponseEntity<CommunityPostResponseDto> getPost(@PathVariable("post-id") Long postId) {
     
-    CommunityPost post = communityService.getPost(postId);
+    CommunityPostResponseDto responseDto = communityService.getPost(postId);
     
-    return ResponseEntity.ok(post);
+    return ResponseEntity.ok(responseDto);
   }
 
   /**
@@ -79,16 +78,16 @@ public class CommunityController {
    * @param commentRequest 댓글 데이터
    * @return 작성된 댓글 정보
    */
-  @PostMapping("/post/{postId}/comment")
-  public ResponseEntity<Comment> createComment(
-      Authentication auth, @PathVariable Long postId, @RequestBody CommentRequestDto commentRequest) {
+  @PostMapping("/post/{post-id}/comment")
+  public ResponseEntity<CommentResponseDto> createComment(
+      Authentication auth, @PathVariable("post-id") Long postId, @RequestBody CommentRequestDto commentRequest) {
     
     Long userId = Long.parseLong(auth.getName());
     
     UserEntity user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     
-    Comment createdComment = communityService.createComment(user, postId, commentRequest.getComment());
+    CommentResponseDto createdComment = communityService.createComment(user, postId, commentRequest.getComment());
     
     return ResponseEntity.ok(createdComment);
   }
@@ -99,8 +98,8 @@ public class CommunityController {
    * @param postId 추천할 게시물 ID
    * @return 추천 결과 메시지
    */
-  @PostMapping("/post/{postId}/recommend")
-  public ResponseEntity<Message> recommendPost(Authentication auth, @PathVariable Long postId) {
+  @PostMapping("/post/{post-id}/recommend")
+  public ResponseEntity<Message> recommendPost(Authentication auth, @PathVariable("post-id") Long postId) {
     
     Long userId = Long.parseLong(auth.getName());
     
@@ -119,23 +118,22 @@ public class CommunityController {
    * @param updateRequestDto 수정할 게시물 데이터
    * @return 수정된 게시물 정보
    */
-  @PutMapping("/post/{postId}")
-  public ResponseEntity<CommunityPost> updatePost(
+  @PutMapping("/post/{post-id}")
+  public ResponseEntity<CommunityPostResponseDto> updatePost(
       Authentication auth,
-      @PathVariable("postId") Long postId,
+      @PathVariable("post-id") Long postId,
       @RequestBody PostUpdateRequestDto updateRequestDto) {
 
     Long userId = Long.parseLong(auth.getName());
     UserEntity user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-    // 조건적으로 포트폴리오 스냅샷 불러오기
     PortfolioDto portfolioSnapshot = null;
-    if ("Y".equalsIgnoreCase(updateRequestDto.getIncludeSnapshot())) {
-        portfolioSnapshot = portfolioService.getUserPortfolio(userId);
+    if (IncludeSnapshotOption.isYes(updateRequestDto.getIncludeSnapshot())) {
+      portfolioSnapshot = portfolioService.getUserPortfolio(userId);
     }
 
-    CommunityPost updatedPost = communityService.updatePost(
+    CommunityPostResponseDto updatedPost = communityService.updatePost(
         user, postId,
         updateRequestDto.getTitle(),
         updateRequestDto.getContent(),
@@ -150,8 +148,8 @@ public class CommunityController {
    * @param postId 삭제할 게시물 ID
    * @return 삭제 결과 메시지
    */
-  @DeleteMapping("/post/{postId}")
-  public ResponseEntity<Message> deletePost(Authentication auth, @PathVariable Long postId) {
+  @DeleteMapping("/post/{post-id}")
+  public ResponseEntity<Message> deletePost(Authentication auth, @PathVariable("post-id") Long postId) {
     
     Long userId = Long.parseLong(auth.getName());
     
@@ -169,8 +167,8 @@ public class CommunityController {
    * @param commentId 삭제할 댓글 ID
    * @return 삭제 결과 메시지
    */
-  @DeleteMapping("/comment/{commentId}")
-  public ResponseEntity<Message> deleteComment(Authentication auth, @PathVariable Long commentId) {
+  @DeleteMapping("/comment/{comment-id}")
+  public ResponseEntity<Message> deleteComment(Authentication auth, @PathVariable("comment-id") Long commentId) {
     
     Long userId = Long.parseLong(auth.getName());
     
@@ -188,8 +186,8 @@ public class CommunityController {
    * @param postId 공지로 설정할 게시물 ID
    * @return 공지 설정 결과 메시지
    */
-  @PostMapping("/post/{postId}/notice")
-  public ResponseEntity<Message> markAsNotice(Authentication auth, @PathVariable Long postId) {
+  @PostMapping("/post/{post-id}/notice")
+  public ResponseEntity<Message> markAsNotice(Authentication auth, @PathVariable("post-id") Long postId) {
     
     Long userId = Long.parseLong(auth.getName());
     
@@ -202,13 +200,13 @@ public class CommunityController {
   }
 
   /**
-   * 게시글 목록 조회 (공지 우선, 최신순)
+   * 게시글 목록 조회
    * @return 게시글 목록
    */
   @GetMapping("/posts")
-  public ResponseEntity<List<CommunityPost>> getPosts() {
+  public ResponseEntity<Page<CommunityPostResponseDto>> getPosts(Pageable pageable) {
     
-    List<CommunityPost> posts = communityService.getPosts();
+    Page<CommunityPostResponseDto> posts = communityService.getPosts(pageable);
     
     return ResponseEntity.ok(posts);
   }
@@ -220,9 +218,9 @@ public class CommunityController {
    * @param days 차단 기간 (1일, 7일, 영구 차단)
    * @return 차단 결과 메시지
    */
-  @PostMapping("/ban/{userId}")
+  @PostMapping("/ban/{user-id}")
   public ResponseEntity<Message> banUser(
-      Authentication auth, @PathVariable Long userId, @RequestParam int days) {
+      Authentication auth, @PathVariable("user-id") Long userId, @RequestParam int days) {
     
     Long adminId = Long.parseLong(auth.getName());
     
@@ -234,3 +232,6 @@ public class CommunityController {
     return ResponseEntity.ok(Message.USER_BANNED);
   }
 }
+
+
+

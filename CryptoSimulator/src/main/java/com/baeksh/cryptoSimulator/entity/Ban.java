@@ -3,12 +3,11 @@ package com.baeksh.cryptoSimulator.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Ban {
@@ -21,11 +20,15 @@ public class Ban {
   @JoinColumn(name = "user_id", nullable = false)
   private UserEntity user;
 
-  private LocalDateTime banEndDate;  // 차단 종료 날짜
+  private LocalDate banEndDate;  // 차단 종료 날짜
 
-  public Ban(UserEntity user, LocalDateTime banEndDate) {
-    this.user = user;
-    this.banEndDate = banEndDate;
+  // 정적 팩토리 메서드 추가
+  public static Ban createBan(UserEntity user, LocalDate banEndDate) {
+    return Ban.builder()
+      .user(user)
+      .banEndDate(banEndDate)
+      .build();
   }
 }
+
 
