@@ -48,7 +48,7 @@ dependencies { //고치면 전체 프로젝트 디렉토리 -> gradle -> 리프�
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mockito:mockito-core:5.5.0'
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-	
+	testImplementation 'org.springframework.security:spring-security-test'
 	
 	//JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
